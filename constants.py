@@ -1,5 +1,5 @@
 sleepTime = 1/120
-iterations = 10000
+iterations = 500
 frequency = 10
 maxForce = 50
 phaseOffset = 3.14159/2
