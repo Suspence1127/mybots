@@ -1,6 +1,6 @@
-sleepTime = 1/60
-iterations = 1000
+sleepTime = 1/120
+iterations = 10000
 frequency = 10
-maxForce = 30
+maxForce = 50
 phaseOffset = 3.14159/2
 amplitude = 3.14159/4
