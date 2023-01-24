@@ -21,6 +21,7 @@ class SIMULATION:
             time.sleep(c.sleepTime)
             p.stepSimulation()
             self.robot.Sense(x)
+            self.robot.Think()
             self.robot.Act(x)
         #numpy.save('data/outputBack.npy', backLegSensorValues)
         #numpy.save('data/outputFront.npy', frontLegSensorValues)
