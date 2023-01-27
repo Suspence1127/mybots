@@ -7,9 +7,12 @@ import random
 import constants as c
 from simulation import SIMULATION
 from world import WORLD
+import sys
 
-simulation = SIMULATION()
+directOrGUI = sys.argv[1]
+simulation = SIMULATION(directOrGUI)
 simulation.Run()
+simulation.Get_Fitness()
 
 # physicsClient = p.connect(p.GUI)
 # p.setAdditionalSearchPath(pybullet_data.getDataPath())
