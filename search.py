@@ -1,9 +1,5 @@
 import os
-import hillclimber
+import parallelHillclimber as p
 
-# for i in range(5):
-#     os.system("python3 generate.py")
-#     os.system("python3 simulate.py")
-
-hc = hillclimber.HILL_CLIMBER()
+hc = p.PARALLEL_HILL_CLIMBER()
 hc.Evolve()

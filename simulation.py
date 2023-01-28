@@ -8,7 +8,7 @@ import constants as c
 import time
 
 class SIMULATION:
-    def __init__(self, directOrGUI):
+    def __init__(self, directOrGUI, solutionID):
         self.sleep = True
         if directOrGUI == "DIRECT":
             self.sleep = False
@@ -18,7 +18,7 @@ class SIMULATION:
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
         self.world = WORLD()
         p.setGravity(0,0,-9.8)
-        self.robot = ROBOT()
+        self.robot = ROBOT(solutionID)
         pass
 
     def Run(self):
