@@ -7,6 +7,7 @@ import numpy
 import constants as c
 import time
 
+# Simulates Assignment 5
 class SIMULATION:
     def __init__(self, directOrGUI, solutionID):
         self.sleep = True
