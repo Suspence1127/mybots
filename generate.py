@@ -1,9 +1,15 @@
 import pyrosim.pyrosim as pyrosim
 import random
+import constants as c
 
 def Create_World():
     pyrosim.Start_SDF("world.sdf")
-    pyrosim.Send_Cube(name="Box", pos=[-3,3,0.5] , size=[1,1,1])
+    for i in range(c.stairs):
+        boxLoc = i / 2
+        # back stairs
+        pyrosim.Send_Cube(name="Box", pos=[-2 - boxLoc,0,0.25 + boxLoc] , size=[0.5,6,0.5 + boxLoc], mass = 100)
+        # frontq    ewtry stairs
+        pyrosim.Send_Cube(name="Box", pos=[2 + boxLoc,0,0.25 + boxLoc] , size=[0.5,6,0.5 + boxLoc], mass = 100)
     pyrosim.End()
     pass
 
@@ -15,9 +21,9 @@ def Create_Robot():
 def Generate_Body():
     pyrosim.Start_URDF("body.urdf")
     pyrosim.Send_Cube(name="Torso", pos=[0,0,1.5] , size=[1,1,1])
-    pyrosim.Send_Joint( name = "Torso_BackLeg" , parent= "Torso" , child = "BackLeg" , type = "revolute", position = [0.5,0,1])
+    pyrosim.Send_Joint( name = "Torso_BackLeg" , parent= "Torso" , child = "BackLeg" , type = "revolute", position = [0.5,0,1], jointAxis="1 0 0")
     pyrosim.Send_Cube(name="BackLeg", pos=[0.5,0,-0.5] , size=[1,1,1])
-    pyrosim.Send_Joint( name = "Torso_FrontLeg" , parent= "Torso" , child = "FrontLeg" , type = "revolute", position = [-0.5,0,1])    
+    pyrosim.Send_Joint( name = "Torso_FrontLeg" , parent= "Torso" , child = "FrontLeg" , type = "revolute", position = [-0.5,0,1], jointAxis= "1 0 0")    
     pyrosim.Send_Cube(name="FrontLeg", pos=[-0.5,0,-0.5] , size=[1,1,1])
     pyrosim.End()
     pass
