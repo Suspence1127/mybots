@@ -1,7 +1,7 @@
 # Assignment 5
 # Spencer Rothfleisch
 
-In this assignment, I created a 2 legged robot each with an upper or lower leg.
+In this assignment, I created a 2 legged robot, with each leg having an upper and lower leg.
 
 The robot is trained to walk (or jump) up a set of staircases, it can chose to go forwards or backwards.
 
