@@ -1,8 +1,6 @@
-# Assignment 5
+# Assignment 6
 # Spencer Rothfleisch
 
-In this assignment, I created a 2 legged robot, with each leg having an upper and lower leg.
+In this assignment, I created a snake with a with a random number of randomly shaped links with random sensor placement along the chain, and the snake also has links with and without sensors colored as green and blue, respectively.
 
-The robot is trained to walk (or jump) up a set of staircases, it can chose to go forwards or backwards.
-
-The fitness function detects how far up the stairs the robot reaches by finding the final height of the robot.
+Each time "button.py" is ran, a randomized snake is created and simulated. This specific program finds a random number between 3 and 15 to determin the length of the snake, and then each link has a 50% chance of having a sensor. Each sensor is connected to every motor for a full neural network.

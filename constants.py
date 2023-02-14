@@ -1,12 +1,10 @@
 sleepTime = 1/120
-iterations = 2500
+iterations = 1500
 frequency = 10
 maxForce = 125
 phaseOffset = 3.14159/2
 amplitude = 3.14159/4
-numberOfGenerations = 10
-populationSize = 10
-numSensorNeurons = 2
-numMotorNeurons = 4
-motorJointRange = 0.8
+numberOfGenerations = 0
+populationSize = 1
+motorJointRange = 1.0
 stairs = 15
