@@ -4,11 +4,15 @@ import numpy
 import random
 import time
 import constants as c
+import link
+import joint
 
 class SOLUTION:
     def __init__(self, nextID):
         self.weights = 0
         self.linkSensor = set()
+        self.linkDict = dict()
+        self.jointDict = dict()
         self.myID = nextID
         pass
 
@@ -18,28 +22,169 @@ class SOLUTION:
         pyrosim.End()
     pass
 
+    def centerCalculator(self, prevCenter, x1, y1, z1, face, x2, y2, z2):
+        if face == 0:
+            return [prevCenter[0] + (x1 / 2) + (x2 / 2), prevCenter[1], prevCenter[2]]
+        elif face == 1:
+            return [prevCenter[0] - (x1 / 2) - (x2 / 2), prevCenter[1], prevCenter[2]]
+        elif face == 2:
+            return [prevCenter[0], prevCenter[1]  + (y1 / 2) + (y2 / 2), prevCenter[2]]
+        elif face == 3:
+            return [prevCenter[0], prevCenter[1]  - (y1 / 2) - (y2 / 2), prevCenter[2]]
+        elif face == 4:
+            return [prevCenter[0], prevCenter[1], prevCenter[2] + (z1 / 2) + (z2 / 2)]
+        else:
+            return [prevCenter[0], prevCenter[1], prevCenter[2] + (z1 / 2) + (z2 / 2)]
+        
+    def noOverlap(self, newCenter, xf, yf, zf):
+        for link in self.linkDict.values():
+            link_min = (
+                link.center[0] - link.x/2,
+                link.center[1] - link.y/2,
+                link.center[2] - link.z/2
+            )
+            link_max = (
+                link.center[0] + link.x/2,
+                link.center[1] + link.y/2,
+                link.center[2] + link.z/2
+            )
+            new_link_min = (
+                newCenter[0] - xf/2,
+                newCenter[1] - yf/2,
+                newCenter[2] - zf/2
+            )
+            new_link_max = (
+                newCenter[0] + xf/2,
+                newCenter[1] + yf/2,
+                newCenter[2] + zf/2
+            )
+            # Check if the new link overlaps with any of the existing links in linkDict
+            if (new_link_min[0] <= link_max[0] and new_link_max[0] >= link_min[0] and
+                new_link_min[1] <= link_max[1] and new_link_max[1] >= link_min[1] and
+                new_link_min[2] <= link_max[2] and new_link_max[2] >= link_min[2]):
+                return False 
+        return True
+    
+    def faceConnect(self, face):
+        if face == 0:
+            return 1
+        elif face == 1:
+            return 0
+        elif face == 2:
+            return 3
+        elif face == 3:
+            return 2
+        elif face == 4:
+            return 5
+        else:
+            return 4
+        
+    def findJoint(self, name1, x1, y1, z1, name2, face):
+        if name1 == "Link0":
+            if face == 0:
+                position = [x1 / 2,0,2]
+                axis = "0 1 0"
+            elif face == 1:
+                position = [-x1 / 2,0,2]
+                axis = "0 1 0"
+            elif face == 2:
+                position = [0,y1 / 2,2]
+                axis = "1 0 0"
+            elif face == 3:
+                position = [0,-y1 / 2,2]
+                axis = "1 0 0"
+            elif face == 4:
+                position = [0,0,(z1 / 2) + 2]
+                axis = "0 0 1"
+            else:
+                position = [0,0,(-z1 / 2) + 2]
+                axis = "0 0 1"
+            self.jointDict["Link0_" + name2] = joint.JOINT("Link0_" + name2, position, "Link0", name2, axis)
+        else:
+            if face == 0:
+                position = [x1, 0, 0]
+                axis = "0 1 0"
+            elif face == 1:
+                position = [-x1, 0, 0]
+                axis = "0 1 0"
+            elif face == 2:
+                position = [0, y1, 0]
+                axis = "0 1 0"
+            elif face == 3:
+                position = [0, -y1, 0]
+                axis = "0 1 0"
+            elif face == 4:
+                position = [0, 0, z1]
+                axis = "0 0 1"
+            else:
+                position = [0, 0, -z1]
+                axis = "0 0 1"
+            self.jointDict[name1 + "_" + name2] = joint.JOINT(name1 + "_" + name2, position, name1, name2, axis)
+        pass
+
+    def findLinkPos(self, parentFace, x, y, z):
+        if parentFace == 0:
+            return [x/2, 0, 0]
+        elif parentFace == 1:
+            return [-x/2, 0, 0]
+        elif parentFace == 2:
+            return [0, y/2, 0]
+        elif parentFace == 3:
+            return [0, -y/2, 0]
+        elif parentFace == 4:
+            return [0, 0, z/2]
+        elif parentFace == 5:
+            return [0, 0, -z/2]
+
+    def mapRobot(self, numberLinks):
+        randNums = numpy.random.rand(3,1) * 1.5 + 0.5
+        self.linkDict["Link0"] = link.LINK("Link0", [0, 0, 2], [0, 0, 2], randNums[0][0],randNums[1][0],randNums[2][0], [0, 0, 0, 0, 0, 1], None)
+        currLinkName = 1
+        while currLinkName < numberLinks:
+            parentLink = self.linkDict["Link" + str(numpy.random.randint(0, len(self.linkDict)))]
+            if 0 in parentLink.faces:
+                empty = False
+                while empty == False:
+                    face = numpy.random.randint(0, 6)
+                    if parentLink.faces[face] == 0:
+                        empty = True
+            randNums = numpy.random.rand(3,1) * 1.5 + 0.5
+            newCenter = self.centerCalculator(parentLink.center, parentLink.x, parentLink.y, parentLink.z, face, randNums[0][0], randNums[1][0], randNums[2][0])
+            if self.noOverlap(newCenter, randNums[0][0], randNums[1][0], randNums[2][0]):
+                parentLink.faces[face] = 1
+                self.linkDict[parentLink.name] = parentLink
+                newFaces = [0, 0, 0, 0, 0, 0]
+                newFaces[self.faceConnect(face)] = 1
+                self.linkDict["Link" + str(currLinkName)] = link.LINK("Link" + str(currLinkName), newCenter, self.findLinkPos(face, randNums[0][0], randNums[1][0], randNums[2][0]), randNums[0][0], randNums[1][0], randNums[2][0], newFaces, [parentLink.name, face, self.faceConnect(face)])
+                self.findJoint(parentLink.name, parentLink.x, parentLink.y, parentLink.z, "Link" + str(currLinkName), face)
+                currLinkName = currLinkName + 1
+        pass
+
     # Creates the randomized body for the snake
     def Create_Body(self, numberLinks):
+        self.mapRobot(numberLinks)
+        # for elements in self.linkDict.values():
+        #     print(elements)
+        # for elements in self.jointDict.values():
+        #     print(elements)
+        # exit()
         pyrosim.Start_URDF("body.urdf")
-        # link can be any dimensions between 0.5 and 2
-        randNums = numpy.random.rand(3,1) * 1.5 + 0.5
         # creates first link
+        link0 = self.linkDict["Link0"]
         if "Link0" in self.linkSensor:
-            pyrosim.Send_Cube(name="Link0", pos=[0,0,2] , size=[randNums[0][0],randNums[1][0],randNums[2][0]], colorString='"0 1.0 0 1.0"', colorName='"Green"')
+            pyrosim.Send_Cube(name=link0.name, pos=link0.position , size=[link0.x, link0.y, link0.z], colorString='"0 1.0 0 1.0"', colorName='"Green"')
         else:
-            pyrosim.Send_Cube(name="Link0", pos=[0,0,2] , size=[randNums[0][0],randNums[1][0],randNums[2][0]], colorString='"0 0 1.0 1.0"', colorName='"Blue"')
-        # creates first joint
-        pyrosim.Send_Joint(name = "Link0_Link1" , parent= "Link0" , child = "Link1", type = "revolute", position = [randNums[0][0] / 2,0,2],jointAxis = "0 1 0")
-
+            pyrosim.Send_Cube(name=link0.name, pos=link0.position , size=[link0.x, link0.y, link0.z], colorString='"0 0 1.0 1.0"', colorName='"Blue"')
+        self.linkDict.pop("Link0")
         # Creates the rest of the links
-        for linkNum in range(1, numberLinks):
-            randNums = numpy.random.rand(3,1) * 2 + 0.5
-            if "Link" + str(linkNum) in self.linkSensor:
-                pyrosim.Send_Cube(name="Link" + str(linkNum), pos=[randNums[0][0] / 2,0,0] , size=[randNums[0][0],randNums[1][0],randNums[2][0]], colorString='"0 1.0 0 1.0"', colorName='"Green"')
+        for link in self.linkDict.values():
+            if link.name in self.linkSensor:
+                pyrosim.Send_Cube(name=link.name, pos=link.position , size=[link.x, link.y, link.z], colorString='"0 1.0 0 1.0"', colorName='"Green"')
             else:
-                pyrosim.Send_Cube(name="Link" + str(linkNum), pos=[randNums[0][0] / 2,0,0] , size=[randNums[0][0],randNums[1][0],randNums[2][0]], colorString='"0 0 1.0 1.0"', colorName='"Blue"')
-            if linkNum < numberLinks - 1:
-                pyrosim.Send_Joint( name = "Link" + str(linkNum) + "_Link" + str(linkNum + 1) , parent= "Link" + str(linkNum) , child = "Link" + str(linkNum + 1) , type = "revolute", position = [randNums[0][0],0,0],jointAxis = "0 1 0")
+                pyrosim.Send_Cube(name=link.name, pos=link.position , size=[link.x, link.y, link.z], colorString='"0 0 1.0 1.0"', colorName='"Blue"')
+        # Creates the joints
+        for joint in self.jointDict.values():
+            pyrosim.Send_Joint( name = joint.name , parent= joint.parent, child = joint.child , type = "revolute", position = joint.position,jointAxis = joint.axis)
         pyrosim.End()
         pass
 
@@ -85,7 +230,7 @@ class SOLUTION:
 
     def Start_Simulation(self, directOrGUI):
         # Determines the number of links for the snake
-        numLinks = numpy.random.randint(3,15)
+        numLinks = numpy.random.randint(3,c.botSize)
         self.Create_World()
         self.Create_Brain(numLinks)
         self.Create_Body(numLinks)
