@@ -14,6 +14,8 @@ class SOLUTION:
         self.linkDict = dict()
         self.jointDict = dict()
         self.myID = nextID
+        self.created = False
+        self.created2 = False
         pass
 
     # Creates empty world for the snake
@@ -79,7 +81,7 @@ class SOLUTION:
         else:
             return 4
         
-    def findJoint(self, name1, x1, y1, z1, name2, face):
+    def addJoint(self, name1, x1, y1, z1, name2, face):
         if name1 == "Link0":
             if face == 0:
                 position = [x1 / 2,0,2]
@@ -151,18 +153,18 @@ class SOLUTION:
             randNums = numpy.random.rand(3,1) * 1.5 + 0.5
             newCenter = self.centerCalculator(parentLink.center, parentLink.x, parentLink.y, parentLink.z, face, randNums[0][0], randNums[1][0], randNums[2][0])
             if self.noOverlap(newCenter, randNums[0][0], randNums[1][0], randNums[2][0]):
+                print("parent: " + parentLink.name + " child: " + str(currLinkName))
                 parentLink.faces[face] = 1
                 self.linkDict[parentLink.name] = parentLink
                 newFaces = [0, 0, 0, 0, 0, 0]
                 newFaces[self.faceConnect(face)] = 1
                 self.linkDict["Link" + str(currLinkName)] = link.LINK("Link" + str(currLinkName), newCenter, self.findLinkPos(face, randNums[0][0], randNums[1][0], randNums[2][0]), randNums[0][0], randNums[1][0], randNums[2][0], newFaces, [parentLink.name, face, self.faceConnect(face)])
-                self.findJoint(parentLink.name, parentLink.x, parentLink.y, parentLink.z, "Link" + str(currLinkName), face)
+                self.addJoint(parentLink.name, parentLink.x, parentLink.y, parentLink.z, "Link" + str(currLinkName), face)
                 currLinkName = currLinkName + 1
         pass
 
     # Creates the randomized body for the snake
-    def Create_Body(self, numberLinks):
-        self.mapRobot(numberLinks)
+    def Create_Body(self):
         # for elements in self.linkDict.values():
         #     print(elements)
         # for elements in self.jointDict.values():
@@ -191,9 +193,9 @@ class SOLUTION:
     def Create_Brain(self, numberLinks):
         pyrosim.Start_NeuralNetwork("brain" + str(self.myID) + ".nndf")
         motorWeightCount = 0
-        for linkNum in range(numberLinks - 1):
+        for joint in self.jointDict.values():
+            pyrosim.Send_Motor_Neuron(name = motorWeightCount, jointName=joint.name)
             motorWeightCount = motorWeightCount + 1
-            pyrosim.Send_Motor_Neuron(name = linkNum, jointName="Link" + str(linkNum) + "_Link" + str(linkNum + 1))
         sensorCount = numberLinks - 1
         sensWeightCount = 0
         for linkNum in range(numberLinks):
@@ -232,8 +234,13 @@ class SOLUTION:
         # Determines the number of links for the snake
         numLinks = numpy.random.randint(3,c.botSize)
         self.Create_World()
+        if not self.created:
+            self.mapRobot(numLinks)
+            self.created = True
         self.Create_Brain(numLinks)
-        self.Create_Body(numLinks)
+        if not self.created2:
+            self.Create_Body()
+            self.created2 = True
         os.system("start /B python3 simulate.py " + directOrGUI + " " + str(self.myID))
 
     def Set_ID(self, id):
