@@ -11,5 +11,6 @@ The morphospace is as follows:<br />
 -For the brain, every joint has a motor neuron, each link has a 50% of having a sensor neuron, and the neural network connects every sensor neuron to every motor neuron
 
 Diagram:
+![alt text](https://github.com/Suspence1127/mybots/blob/assignment7/diagram.jpg?raw=true)
 
 Credits: This assignment was built with assistance from the [r/ludobots](https://www.reddit.com/r/ludobots/) reddit course and the [pyrosim](https://ccappelle.github.io/pyrosim/) python package.
