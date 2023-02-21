@@ -83,6 +83,8 @@ class SOLUTION:
             return 4
         
     def addJoint(self, name1, x1, y1, z1, name2, face, parentJointFace):
+        #axisIndex = numpy.random.randint(6)
+        #axisArray = ["1 0 0", "-1 0 0", "0 1 0", "0 -1 0", "0 0 1", "0, 0, -1"]
         if name1 == "Link0":
             if face == 0:
                 position = [x1 / 2,0,2]
@@ -167,9 +169,9 @@ class SOLUTION:
                 elif prevJointFace == 1:
                     position = [x1 / 2, 0, z1 / 2]
                 elif prevJointFace == 2:
-                    position = [-y1 / 2, 0, z1 / 2]
+                    position = [0, -y1 / 2, z1 / 2]
                 elif prevJointFace == 3:
-                    position = [y1 / 2, 0, z1 / 2]
+                    position = [0, y1 / 2, z1 / 2]
                 elif prevJointFace == 4:
                     return "error"
                 else:
@@ -181,9 +183,9 @@ class SOLUTION:
                 elif prevJointFace == 1:
                     position = [x1 / 2, 0, -z1 / 2]
                 elif prevJointFace == 2:
-                    position = [-y1 / 2, 0, -z1 / 2]
+                    position = [0, -y1 / 2, -z1 / 2]
                 elif prevJointFace == 3:
-                    position = [y1 / 2, 0, -z1 / 2]
+                    position = [0, y1 / 2, -z1 / 2]
                 elif prevJointFace == 4:
                     position = [0, 0, -z1]
                 else:
