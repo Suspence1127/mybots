@@ -25,6 +25,7 @@ class SOLUTION:
         pyrosim.End()
     pass
 
+    # Calculates the absolute center of the link
     def centerCalculator(self, prevCenter, x1, y1, z1, face, x2, y2, z2):
         if face == 0:
             return [prevCenter[0] + (x1 / 2) + (x2 / 2), prevCenter[1], prevCenter[2]]
@@ -38,36 +39,22 @@ class SOLUTION:
             return [prevCenter[0], prevCenter[1], prevCenter[2] + (z1 / 2) + (z2 / 2)]
         else:
             return [prevCenter[0], prevCenter[1], prevCenter[2] - (z1 / 2) - (z2 / 2)]
-        
+    
+    # Checks if a potential new link overlaps any of the existing links
     def noOverlap(self, newCenter, xf, yf, zf):
         for link in self.linkDict.values():
-            link_min = (
-                link.center[0] - link.x/2,
-                link.center[1] - link.y/2,
-                link.center[2] - link.z/2
-            )
-            link_max = (
-                link.center[0] + link.x/2,
-                link.center[1] + link.y/2,
-                link.center[2] + link.z/2
-            )
-            new_link_min = (
-                newCenter[0] - xf/2,
-                newCenter[1] - yf/2,
-                newCenter[2] - zf/2
-            )
-            new_link_max = (
-                newCenter[0] + xf/2,
-                newCenter[1] + yf/2,
-                newCenter[2] + zf/2
-            )
-            # Check if the new link overlaps with any of the existing links in linkDict
-            if (new_link_min[0] <= link_max[0] and new_link_max[0] >= link_min[0] and
-                new_link_min[1] <= link_max[1] and new_link_max[1] >= link_min[1] and
-                new_link_min[2] <= link_max[2] and new_link_max[2] >= link_min[2]) or new_link_min[2] < 0.1:
+            linkMin = [link.center[0] - link.x/2, link.center[1] - link.y/2, link.center[2] - link.z/2]
+            linkMax = [link.center[0] + link.x/2, link.center[1] + link.y/2, link.center[2] + link.z/2]
+            newLinkMin = [newCenter[0] - xf/2, newCenter[1] - yf/2, newCenter[2] - zf/2]
+            newLinkMax = [newCenter[0] + xf/2, newCenter[1] + yf/2, newCenter[2] + zf/2]
+            # Check if the new link overlaps with any of the existing links in linkDict or if its below the floor
+            if (newLinkMin[0] <= linkMax[0] and newLinkMax[0] >= linkMin[0] and
+                newLinkMin[1] <= linkMax[1] and newLinkMax[1] >= linkMin[1] and
+                newLinkMin[2] <= linkMax[2] and newLinkMax[2] >= linkMin[2]) or newLinkMin[2] < 0.1:
                 return False 
         return True
     
+    # Returns the face on the current link that is connected to the previous link
     def faceConnect(self, face):
         if face == 0:
             return 1
@@ -81,7 +68,8 @@ class SOLUTION:
             return 5
         else:
             return 4
-        
+
+    # Adds elements to the joint dictionary    
     def addJoint(self, name1, x1, y1, z1, name2, face, parentJointFace):
         #axisIndex = numpy.random.randint(6)
         #axisArray = ["1 0 0", "-1 0 0", "0 1 0", "0 -1 0", "0 0 1", "0, 0, -1"]
@@ -194,6 +182,7 @@ class SOLUTION:
             self.jointDict[name1 + "_" + name2] = joint.JOINT(name1 + "_" + name2, position, name1, name2, axis, face)
         pass
 
+    # Finds the link position relative to the joint depending on the face
     def findLinkPos(self, parentFace, x, y, z):
         if parentFace == 0:
             return [x/2, 0, 0]
@@ -207,7 +196,8 @@ class SOLUTION:
             return [0, 0, z/2]
         elif parentFace == 5:
             return [0, 0, -z/2]
-        
+
+    # Finds the parent joint in order to later calculate relative position    
     def findParentJoint(self, parentLink):
         for link in self.jointDict.keys():
             if "_" + parentLink in link:
@@ -215,6 +205,7 @@ class SOLUTION:
                 return self.jointDict[link]
         return None
 
+    # Creates a general outline of the robot
     def mapRobot(self, numberLinks):
         randNums = numpy.random.rand(3,1) * 1.5 + 0.5
         self.linkDict["Link0"] = link.LINK("Link0", [0, 0, 2], [0, 0, 2], randNums[0][0],randNums[1][0],randNums[2][0], [0, 0, 0, 0, 0, 1], None)
@@ -241,7 +232,7 @@ class SOLUTION:
                 currLinkName = currLinkName + 1
         pass
 
-    # Creates the randomized body for the snake
+    # Creates the body of the robot based on the map
     def Create_Body(self):
         # for elements in self.linkDict.values():
         #     print(elements)
