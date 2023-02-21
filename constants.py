@@ -7,4 +7,4 @@ amplitude = 3.14159/4
 numberOfGenerations = 0
 populationSize = 1
 motorJointRange = 1.0
-botSize = 12
+botSize = 15

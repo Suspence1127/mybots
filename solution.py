@@ -15,6 +15,7 @@ class SOLUTION:
         self.jointDict = dict()
         self.myID = nextID
         self.created = False
+        self.created1 = False
         self.created2 = False
         pass
 
@@ -36,7 +37,7 @@ class SOLUTION:
         elif face == 4:
             return [prevCenter[0], prevCenter[1], prevCenter[2] + (z1 / 2) + (z2 / 2)]
         else:
-            return [prevCenter[0], prevCenter[1], prevCenter[2] + (z1 / 2) + (z2 / 2)]
+            return [prevCenter[0], prevCenter[1], prevCenter[2] - (z1 / 2) - (z2 / 2)]
         
     def noOverlap(self, newCenter, xf, yf, zf):
         for link in self.linkDict.values():
@@ -63,7 +64,7 @@ class SOLUTION:
             # Check if the new link overlaps with any of the existing links in linkDict
             if (new_link_min[0] <= link_max[0] and new_link_max[0] >= link_min[0] and
                 new_link_min[1] <= link_max[1] and new_link_max[1] >= link_min[1] and
-                new_link_min[2] <= link_max[2] and new_link_max[2] >= link_min[2]):
+                new_link_min[2] <= link_max[2] and new_link_max[2] >= link_min[2]) or new_link_min[2] < 0.1:
                 return False 
         return True
     
@@ -81,7 +82,7 @@ class SOLUTION:
         else:
             return 4
         
-    def addJoint(self, name1, x1, y1, z1, name2, face):
+    def addJoint(self, name1, x1, y1, z1, name2, face, parentJointFace):
         if name1 == "Link0":
             if face == 0:
                 position = [x1 / 2,0,2]
@@ -101,27 +102,94 @@ class SOLUTION:
             else:
                 position = [0,0,(-z1 / 2) + 2]
                 axis = "0 0 1"
-            self.jointDict["Link0_" + name2] = joint.JOINT("Link0_" + name2, position, "Link0", name2, axis)
+            self.jointDict["Link0_" + name2] = joint.JOINT("Link0_" + name2, position, "Link0", name2, axis, face)
         else:
+            prevJointFace = self.faceConnect(parentJointFace.face)
             if face == 0:
-                position = [x1, 0, 0]
+                if prevJointFace == 0:
+                    return "error"
+                elif prevJointFace == 1:
+                    position = [x1, 0, 0]
+                elif prevJointFace == 2:
+                    position = [x1 / 2, -y1 / 2, 0]
+                elif prevJointFace == 3:
+                    position = [x1 / 2, y1 / 2, 0]
+                elif prevJointFace == 4:
+                    position = [x1 / 2, 0, -z1 / 2]
+                else:
+                    position = [x1 / 2, 0, z1 / 2]
                 axis = "0 1 0"
             elif face == 1:
-                position = [-x1, 0, 0]
+                if prevJointFace == 0:
+                    position = [-x1, 0, 0]
+                elif prevJointFace == 1:
+                    return "error"
+                elif prevJointFace == 2:
+                    position = [-x1 / 2, -y1 / 2, 0]
+                elif prevJointFace == 3:
+                    position = [-x1 / 2, y1 / 2, 0]
+                elif prevJointFace == 4:
+                    position = [-x1 / 2, 0, -z1 / 2]
+                else:
+                    position = [-x1 / 2, 0, z1 / 2]
                 axis = "0 1 0"
             elif face == 2:
-                position = [0, y1, 0]
+                if prevJointFace == 0:
+                    position = [-x1 / 2, y1 / 2, 0]
+                elif prevJointFace == 1:
+                    position = [x1 / 2, y1 / 2, 0]
+                elif prevJointFace == 2:
+                    return "error"
+                elif prevJointFace == 3:
+                    position = [y1, 0, 0]
+                elif prevJointFace == 4:
+                    position = [0, y1 / 2, -z1 / 2]
+                else:
+                    position = [0, y1 / 2, z1 / 2]
                 axis = "0 1 0"
             elif face == 3:
-                position = [0, -y1, 0]
+                if prevJointFace == 0:
+                    position = [-x1 / 2, -y1 / 2, 0]
+                elif prevJointFace == 1:
+                    position = [x1 / 2, -y1 / 2, 0]
+                elif prevJointFace == 2:
+                    position = [0, -y1, 0]
+                elif prevJointFace == 3:
+                    return "error"
+                elif prevJointFace == 4:
+                    position = [0, -y1 / 2, -z1 / 2]
+                else:
+                    position = [0, -y1 / 2, z1 / 2]
                 axis = "0 1 0"
             elif face == 4:
-                position = [0, 0, z1]
+                if prevJointFace == 0:
+                    position = [-x1 / 2, 0, z1 / 2] 
+                elif prevJointFace == 1:
+                    position = [x1 / 2, 0, z1 / 2]
+                elif prevJointFace == 2:
+                    position = [-y1 / 2, 0, z1 / 2]
+                elif prevJointFace == 3:
+                    position = [y1 / 2, 0, z1 / 2]
+                elif prevJointFace == 4:
+                    return "error"
+                else:
+                    position = [0, 0, z1]
                 axis = "0 0 1"
             else:
-                position = [0, 0, -z1]
+                if prevJointFace == 0:
+                    position = [-x1 / 2, 0, -z1 / 2] 
+                elif prevJointFace == 1:
+                    position = [x1 / 2, 0, -z1 / 2]
+                elif prevJointFace == 2:
+                    position = [-y1 / 2, 0, -z1 / 2]
+                elif prevJointFace == 3:
+                    position = [y1 / 2, 0, -z1 / 2]
+                elif prevJointFace == 4:
+                    position = [0, 0, -z1]
+                else:
+                    return "error"
                 axis = "0 0 1"
-            self.jointDict[name1 + "_" + name2] = joint.JOINT(name1 + "_" + name2, position, name1, name2, axis)
+            self.jointDict[name1 + "_" + name2] = joint.JOINT(name1 + "_" + name2, position, name1, name2, axis, face)
         pass
 
     def findLinkPos(self, parentFace, x, y, z):
@@ -137,6 +205,13 @@ class SOLUTION:
             return [0, 0, z/2]
         elif parentFace == 5:
             return [0, 0, -z/2]
+        
+    def findParentJoint(self, parentLink):
+        for link in self.jointDict.keys():
+            if "_" + parentLink in link:
+                print(self.jointDict[link])
+                return self.jointDict[link]
+        return None
 
     def mapRobot(self, numberLinks):
         randNums = numpy.random.rand(3,1) * 1.5 + 0.5
@@ -153,13 +228,14 @@ class SOLUTION:
             randNums = numpy.random.rand(3,1) * 1.5 + 0.5
             newCenter = self.centerCalculator(parentLink.center, parentLink.x, parentLink.y, parentLink.z, face, randNums[0][0], randNums[1][0], randNums[2][0])
             if self.noOverlap(newCenter, randNums[0][0], randNums[1][0], randNums[2][0]):
-                print("parent: " + parentLink.name + " child: " + str(currLinkName))
+                #print("parent: " + parentLink.name + " child: " + str(currLinkName))
                 parentLink.faces[face] = 1
                 self.linkDict[parentLink.name] = parentLink
                 newFaces = [0, 0, 0, 0, 0, 0]
                 newFaces[self.faceConnect(face)] = 1
                 self.linkDict["Link" + str(currLinkName)] = link.LINK("Link" + str(currLinkName), newCenter, self.findLinkPos(face, randNums[0][0], randNums[1][0], randNums[2][0]), randNums[0][0], randNums[1][0], randNums[2][0], newFaces, [parentLink.name, face, self.faceConnect(face)])
-                self.addJoint(parentLink.name, parentLink.x, parentLink.y, parentLink.z, "Link" + str(currLinkName), face)
+                parentJointFace = self.findParentJoint(parentLink.name)
+                self.addJoint(parentLink.name, parentLink.x, parentLink.y, parentLink.z, "Link" + str(currLinkName), face, parentJointFace)
                 currLinkName = currLinkName + 1
         pass
 
@@ -196,7 +272,7 @@ class SOLUTION:
         for joint in self.jointDict.values():
             pyrosim.Send_Motor_Neuron(name = motorWeightCount, jointName=joint.name)
             motorWeightCount = motorWeightCount + 1
-        sensorCount = numberLinks - 1
+        sensorCount = motorWeightCount
         sensWeightCount = 0
         for linkNum in range(numberLinks):
             sensorExists = numpy.random.randint(2)
@@ -209,7 +285,7 @@ class SOLUTION:
         self.numSensorNeurons = sensWeightCount
         self.numMotorNeurons = motorWeightCount
         for currentRow in range(sensWeightCount):
-            for currentColumn in range(numberLinks - 1):
+            for currentColumn in range(motorWeightCount):
                 pyrosim.Send_Synapse( sourceNeuronName = currentRow + numberLinks - 1, targetNeuronName = currentColumn, weight = self.Send_Synapse(currentRow, currentColumn))
         pyrosim.End()
 
@@ -237,7 +313,9 @@ class SOLUTION:
         if not self.created:
             self.mapRobot(numLinks)
             self.created = True
-        self.Create_Brain(numLinks)
+        if not self.created1:
+            self.Create_Brain(numLinks)
+            self.created1 = True
         if not self.created2:
             self.Create_Body()
             self.created2 = True
