@@ -13,6 +13,7 @@ class SOLUTION:
         self.linkSensor = set()
         self.linkDict = dict()
         self.jointDict = dict()
+        self.synapseDict = dict()
         self.myID = nextID
         self.created = False
         self.created1 = False
@@ -131,7 +132,7 @@ class SOLUTION:
                 elif prevJointFace == 2:
                     return "error"
                 elif prevJointFace == 3:
-                    position = [y1, 0, 0]
+                    position = [0, y1, 0]
                 elif prevJointFace == 4:
                     position = [0, y1 / 2, -z1 / 2]
                 else:
@@ -201,13 +202,14 @@ class SOLUTION:
     def findParentJoint(self, parentLink):
         for link in self.jointDict.keys():
             if "_" + parentLink in link:
-                print(self.jointDict[link])
+                #print(self.jointDict[link])
                 return self.jointDict[link]
         return None
 
     # Creates a general outline of the robot
     def mapRobot(self, numberLinks):
         randNums = numpy.random.rand(3,1) * 1.5 + 0.5
+        #randNums = [[1],[1],[1]]
         self.linkDict["Link0"] = link.LINK("Link0", [0, 0, 2], [0, 0, 2], randNums[0][0],randNums[1][0],randNums[2][0], [0, 0, 0, 0, 0, 1], None)
         currLinkName = 1
         while currLinkName < numberLinks:
@@ -219,6 +221,7 @@ class SOLUTION:
                     if parentLink.faces[face] == 0:
                         empty = True
             randNums = numpy.random.rand(3,1) * 1.5 + 0.5
+            #randNums = [[1],[1],[1]]
             newCenter = self.centerCalculator(parentLink.center, parentLink.x, parentLink.y, parentLink.z, face, randNums[0][0], randNums[1][0], randNums[2][0])
             if self.noOverlap(newCenter, randNums[0][0], randNums[1][0], randNums[2][0]):
                 #print("parent: " + parentLink.name + " child: " + str(currLinkName))
@@ -246,7 +249,7 @@ class SOLUTION:
             pyrosim.Send_Cube(name=link0.name, pos=link0.position , size=[link0.x, link0.y, link0.z], colorString='"0 1.0 0 1.0"', colorName='"Green"')
         else:
             pyrosim.Send_Cube(name=link0.name, pos=link0.position , size=[link0.x, link0.y, link0.z], colorString='"0 0 1.0 1.0"', colorName='"Blue"')
-        self.linkDict.pop("Link0")
+        addBack0 = self.linkDict.pop("Link0")
         # Creates the rest of the links
         for link in self.linkDict.values():
             if link.name in self.linkSensor:
@@ -257,13 +260,14 @@ class SOLUTION:
         for joint in self.jointDict.values():
             pyrosim.Send_Joint( name = joint.name , parent= joint.parent, child = joint.child , type = "revolute", position = joint.position,jointAxis = joint.axis)
         pyrosim.End()
+        self.linkDict["Link0"] = addBack0
         pass
 
     def Create_Brain(self, numberLinks):
-        pyrosim.Start_NeuralNetwork("brain" + str(self.myID) + ".nndf")
+        #pyrosim.Start_NeuralNetwork("brain" + str(self.myID) + ".nndf")
         motorWeightCount = 0
         for joint in self.jointDict.values():
-            pyrosim.Send_Motor_Neuron(name = motorWeightCount, jointName=joint.name)
+            #pyrosim.Send_Motor_Neuron(name = motorWeightCount, jointName=joint.name)
             motorWeightCount = motorWeightCount + 1
         sensorCount = motorWeightCount
         sensWeightCount = 0
@@ -271,16 +275,19 @@ class SOLUTION:
             sensorExists = numpy.random.randint(2)
             if sensorExists == 0:
                 sensWeightCount = sensWeightCount + 1
-                pyrosim.Send_Sensor_Neuron(name = sensorCount, linkName="Link" + str(linkNum))
+                #pyrosim.Send_Sensor_Neuron(name = sensorCount, linkName="Link" + str(linkNum))
                 self.linkSensor.add("Link" + str(linkNum))
                 sensorCount = sensorCount + 1
         self.weights = numpy.random.rand(sensWeightCount, motorWeightCount) * 2 - 1
         self.numSensorNeurons = sensWeightCount
         self.numMotorNeurons = motorWeightCount
+        synpName = 0
         for currentRow in range(sensWeightCount):
             for currentColumn in range(motorWeightCount):
-                pyrosim.Send_Synapse( sourceNeuronName = currentRow + numberLinks - 1, targetNeuronName = currentColumn, weight = self.Send_Synapse(currentRow, currentColumn))
-        pyrosim.End()
+                self.synapseDict[synpName] = [currentRow + numberLinks - 1, currentColumn, self.Send_Synapse(currentRow, currentColumn)]
+                synpName = synpName + 1
+                #pyrosim.Send_Synapse( sourceNeuronName = currentRow + numberLinks - 1, targetNeuronName = currentColumn, weight = self.Send_Synapse(currentRow, currentColumn))
+        #pyrosim.End()
 
     def Mutate(self):
         self.weights[random.randint(0, self.numSensorNeurons - 1)][random.randint(0, self.numMotorNeurons - 1)] = random.random() * 2 - 1
@@ -299,23 +306,27 @@ class SOLUTION:
         os.system("del fitness" + str(self.myID) + ".txt")
 
 
-    def Start_Simulation(self, directOrGUI):
+    def Create_Simulation(self):
         # Determines the number of links for the snake
-        numLinks = numpy.random.randint(3,c.botSize)
+        self.numLinks = numpy.random.randint(3,c.botSize)
         self.Create_World()
         if not self.created:
-            self.mapRobot(numLinks)
+            self.mapRobot(self.numLinks)
             self.created = True
         if not self.created1:
-            self.Create_Brain(numLinks)
+            self.Create_Brain(self.numLinks)
             self.created1 = True
         if not self.created2:
-            self.Create_Body()
+            #self.Create_Body()
             self.created2 = True
-        os.system("start /B python3 simulate.py " + directOrGUI + " " + str(self.myID))
+        #os.system("start /B python3 simulate.py " + "GUI" + " " + str(self.myID))
+        return self.Get_Robot()
 
     def Set_ID(self, id):
         self.myID = id
 
     def Send_Synapse(self, currentRow, currentColumn):
         return self.weights[currentRow][currentColumn]
+    
+    def Get_Robot(self):
+        return [self.linkDict, self.jointDict, self.linkSensor, self.synapseDict, self.myID, self.numLinks]

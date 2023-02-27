@@ -2,65 +2,107 @@ import solution
 import constants as c
 import copy
 import os
+import runSim
+import numpy
+import random
+import matplotlib.pyplot as plt
 
 class PARALLEL_HILL_CLIMBER:
     def __init__(self):
         os.system("del brain*.nndf")
         os.system("del fitness*.txt")
+        os.system("del body*.urdf")
+        self.fitnessDictParents = dict()
+        self.fitnessDictChildren = dict()
+        self.fitnessPlotData = [[0 for j in range(c.numberOfGenerations)] for i in range(c.populationSize)]
+        self.curGen = 0
         self.parents = dict()
         self.nextAvailableID = 0
         for num in range(c.populationSize):
-            self.parents[num] = solution.SOLUTION(self.nextAvailableID)
+            self.parents[num] = solution.SOLUTION(self.nextAvailableID).Create_Simulation()
             self.nextAvailableID = self.nextAvailableID + 1
 
     def Evolve(self):
-        self.Evaluate(self.parents)
+        self.Evaluate(self.parents, True)
         for currentGeneration in range(c.numberOfGenerations):
-            self.Evolve_For_One_Generation("DIRECT")
+            self.Evolve_For_One_Generation()
         self.Show_Best()
         pass
 
     def Show_Best(self):
         bestKey = 0
-        for key in self.parents:
-            if self.parents[key].fitness > self.parents[bestKey].fitness:
+        for key in self.parents.keys():
+            if self.fitnessDictParents[key] < self.fitnessDictParents[bestKey]:
                 bestKey = key
-        self.parents[bestKey].Start_Simulation("GUI")
-        print(self.parents[bestKey].fitness)
+        runSim.Start_Simulation(self.parents[bestKey], "GUI")
+        print(self.fitnessDictParents[bestKey])
+
+        for i in range(c.populationSize):
+            plt.plot(self.fitnessPlotData[i], label="Robot {}".format(i))
+        # add labels and title to the plot
+        plt.xlabel('Generation')
+        plt.ylabel('Distance')
+        plt.title('Robot VS Distance')
+        plt.legend()
+        plt.show()
         pass
 
     def Spawn(self):
+        # Robot = [self.linkDict, self.jointDict, self.linkSensor, self.synapseDict, self.myID, self.numLinks]
         self.children = dict()
-        for key in self.parents:
-            self.children[key] = copy.deepcopy(self.parents[key])
-            self.children[key].Set_ID(self.nextAvailableID)
+        for key in self.parents.keys():
+            newChild = copy.deepcopy(self.parents[key])
+            newChild[4] = self.nextAvailableID
+            self.children[key] = newChild
             self.nextAvailableID = self.nextAvailableID + 1
 
     def Mutate(self):
         for key in self.children:
-            self.children[key].Mutate()
+            currChild = self.children[key]
+            # Determines whether to remove a link, add a link, or change a sensor
+            mutateNum = numpy.random.randint(3)
+            #if mutateNum == 0:
+            newSynap = self.MutateSynapses(currChild[3])
+            currChild[3] = newSynap
+            self.children[key] = currChild
+            #elif mutateNum == 1:
+
+    def MutateSynapses(self, sypArr):
+        mutateNum = numpy.random.randint(len(sypArr))
+        sypArr[mutateNum][2] = random.random() * 2 - 1
+        return sypArr
 
     def Select(self):
-        for key in self.parents:
-            if self.parents[key].fitness < self.children[key].fitness:
-                self.parents[key] = self.children[key]
+        for key in self.fitnessDictParents.keys():
+            if self.fitnessDictParents[key] > self.fitnessDictChildren[key]:
+                self.parents[key] = copy.deepcopy(self.children[key])
+                self.fitnessDictParents[key] = self.fitnessDictChildren[key]
+        for key in self.fitnessDictParents:
+            self.fitnessPlotData[key][self.curGen] = self.fitnessDictParents[key]
+        self.curGen = self.curGen + 1
         
-    def Evaluate(self, solutions):
+    def Evaluate(self, solutions, isParent):
         for bot in solutions:
-            solutions[bot].Start_Simulation("DIRECT")
-        for bot in solutions:
-            solutions[bot].Wait_For_Simulation_To_End("DIRECT")
+            runSim.Start_Simulation(solutions[bot], "DIRECT")
+        if isParent:
+            for bot in solutions:
+                currFitness = runSim.Wait_For_Simulation_To_End(solutions[bot][4])
+                self.fitnessDictParents[solutions[bot][4]] = currFitness
+        else:
+            for bot in solutions:
+                currFitness = runSim.Wait_For_Simulation_To_End(solutions[bot][4])
+                self.fitnessDictChildren[bot] = currFitness
 
-    def Evolve_For_One_Generation(self, directOrGUI):
+    def Evolve_For_One_Generation(self):
         self.Spawn()
         self.Mutate()
-        self.Evaluate(self.children)
+        self.Evaluate(self.children, False)
         self.Print()
         self.Select()
 
     def Print(self):
         print("")
         print("")
-        for key in self.parents:
-            print("Parent " + str(key) + ": " + str(self.parents[key].fitness) + " Child: " + str(self.children[key].fitness))
+        for key in self.fitnessDictParents:
+            print("Parent " + str(key) + ": " + str(self.fitnessDictParents[key]) + " Child: " + str(self.fitnessDictChildren[key]))
         print("")
