@@ -6,6 +6,7 @@ import runSim
 import numpy
 import random
 import matplotlib.pyplot as plt
+from addRemoveLink import robotMutation
 
 class PARALLEL_HILL_CLIMBER:
     def __init__(self):
@@ -21,6 +22,7 @@ class PARALLEL_HILL_CLIMBER:
         for num in range(c.populationSize):
             self.parents[num] = solution.SOLUTION(self.nextAvailableID).Create_Simulation()
             self.nextAvailableID = self.nextAvailableID + 1
+        self.ogParents = copy.deepcopy(self.parents)
 
     def Evolve(self):
         self.Evaluate(self.parents, True)
@@ -35,7 +37,8 @@ class PARALLEL_HILL_CLIMBER:
             if self.fitnessDictParents[key] < self.fitnessDictParents[bestKey]:
                 bestKey = key
         runSim.Start_Simulation(self.parents[bestKey], "GUI")
-        print(self.fitnessDictParents[bestKey])
+        runSim.Start_Simulation(self.ogParents[bestKey], "GUI")
+        print("Best Fitness: " + str(self.fitnessDictParents[bestKey]) + ", ID: " + str(self.parents[bestKey][4]) + ", Parent: " + str(bestKey))
 
         for i in range(c.populationSize):
             plt.plot(self.fitnessPlotData[i], label="Robot {}".format(i))
@@ -61,11 +64,17 @@ class PARALLEL_HILL_CLIMBER:
             currChild = self.children[key]
             # Determines whether to remove a link, add a link, or change a sensor
             mutateNum = numpy.random.randint(3)
-            #if mutateNum == 0:
-            newSynap = self.MutateSynapses(currChild[3])
-            currChild[3] = newSynap
-            self.children[key] = currChild
-            #elif mutateNum == 1:
+            # Change Random Sensor Weight
+            if mutateNum == 0:
+                newSynap = self.MutateSynapses(currChild[3])
+                currChild[3] = newSynap
+                self.children[key] = currChild
+            # Add block
+            elif mutateNum == 1:
+                self.children[key] = robotMutation.addLink(currChild)
+            # Remove block
+            else:
+                self.children[key] = robotMutation.removeLink(currChild)
 
     def MutateSynapses(self, sypArr):
         mutateNum = numpy.random.randint(len(sypArr))
