@@ -41,6 +41,6 @@ The algorithm is as follows:<br />
 &nbsp;&nbsp;&nbsp;&nbsp;6. The fitness of the 5 robots are [plotted](https://github.com/Suspence1127/mybots/blob/assignment8/samplePlot.png) and shown (example shows 5 seeds for 20 generations)<br />
 
 Diagram:
-![alt text](https://github.com/Suspence1127/mybots/blob/assignment7/diagram.jpg?raw=true)
+![alt text](https://github.com/Suspence1127/mybots/blob/assignment8/diagramNEW.jpg)
 
 Credits: This assignment was built with assistance from the [r/ludobots](https://www.reddit.com/r/ludobots/) reddit course and the [pyrosim](https://ccappelle.github.io/pyrosim/) python package.
