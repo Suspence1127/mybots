@@ -44,8 +44,8 @@ class PARALLEL_HILL_CLIMBER:
             plt.plot(self.fitnessPlotData[i], label="Robot {}".format(i))
         # add labels and title to the plot
         plt.xlabel('Generation')
-        plt.ylabel('Distance')
-        plt.title('Robot VS Distance')
+        plt.ylabel('Fitness (Distance in -x Direction)')
+        plt.title('Robot VS Fitness')
         plt.legend()
         plt.show()
         os.system("del brain*.nndf")
