@@ -38,7 +38,7 @@ The algorithm is as follows:<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e. If the fitness of the child is more favorable than the parent, it takes the parent's position<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f. This continues for 20 generations (configurable in constants.py)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;5. Best evolution and its original parent are shown<br />
-&nbsp;&nbsp;&nbsp;&nbsp;6. The fitness of the 5 robots are plotted and shown<br />
+&nbsp;&nbsp;&nbsp;&nbsp;6. The fitness of the 5 robots are [plotted](https://github.com/Suspence1127/mybots/blob/assignment8/samplePlot.png) and shown (example shows 5 seeds for 20 generations)<br />
 
 Diagram:
 ![alt text](https://github.com/Suspence1127/mybots/blob/assignment7/diagram.jpg?raw=true)
