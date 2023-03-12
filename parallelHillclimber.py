@@ -10,9 +10,9 @@ from addRemoveLink import robotMutation
 
 class PARALLEL_HILL_CLIMBER:
     def __init__(self):
-        # os.system("del brain*.nndf")
-        # os.system("del fitness*.txt")
-        # os.system("del body*.urdf")
+        os.system("del brain*.nndf")
+        os.system("del fitness*.txt")
+        os.system("del body*.urdf")
         self.fitnessDictParents = dict()
         self.fitnessDictChildren = dict()
         self.fitnessPlotData = [[0 for j in range(c.numberOfGenerations)] for i in range(c.populationSize)]
