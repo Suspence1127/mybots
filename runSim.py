@@ -56,9 +56,15 @@ def Evaluate(directOrGUI):
     Wait_For_Simulation_To_End(directOrGUI)
 
 def Wait_For_Simulation_To_End(id):
-    while not os.path.exists("fitness" + str(id) + ".txt"):
-        time.sleep(0.01)
-    f = open("fitness" + str(id) + ".txt", "r")
+    # while not os.path.exists("fitness" + str(id) + ".txt"):
+    #     time.sleep(0.01)
+    opened = False
+    while not opened:
+        try:
+            f = open("fitness" + str(id) + ".txt", "r")
+            opened = True
+        except:
+            continue
     fitness = float(f.read())
     f.close()
     os.system("del fitness" + str(id) + ".txt")
@@ -70,4 +76,7 @@ def Start_Simulation(robot, directOrGUI):
     #Create_World()
     Create_Brain(robot[1], robot[2], robot[3], robot[4], robot[5])
     Create_Body(robot[0], robot[1], robot[2], robot[4])
-    os.system("start /B python3 simulate.py " + directOrGUI + " " + str(robot[4]))
+    # see pyrosim errors
+    #os.system("start /B python3 simulate.py " + directOrGUI + " " + str(robot[4]))
+    # dont see pyrosim errors
+    os.system("start /B python3 -W ignore simulate.py " + directOrGUI + " " + str(robot[4]) + " >NUL 2>&1")

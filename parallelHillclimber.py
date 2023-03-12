@@ -13,6 +13,7 @@ class PARALLEL_HILL_CLIMBER:
         os.system("del brain*.nndf")
         os.system("del fitness*.txt")
         os.system("del body*.urdf")
+        self.currentGeneration = 1
         self.fitnessDictParents = dict()
         self.fitnessDictChildren = dict()
         self.fitnessPlotData = [[0 for j in range(c.numberOfGenerations)] for i in range(c.populationSize)]
@@ -28,6 +29,7 @@ class PARALLEL_HILL_CLIMBER:
         self.Evaluate(self.parents, True)
         for currentGeneration in range(c.numberOfGenerations):
             self.Evolve_For_One_Generation()
+            self.currentGeneration = self.currentGeneration + 1
         self.Show_Best()
         pass
 
@@ -72,9 +74,23 @@ class PARALLEL_HILL_CLIMBER:
                 newSynap = self.MutateSynapses(currChild[3])
                 currChild[3] = newSynap
                 self.children[key] = currChild
-            # Add block
+            # Check if there are empty faces
             elif mutateNum == 1:
-                self.children[key] = robotMutation.addLink(currChild)
+                addLink = False
+                if currChild[6] == 3:
+                    linksDict = currChild[0]
+                    for link in linksDict.values():
+                        if ((link.x != 0 and link.y != 0) and link.z != 0) and any(x == 0 for x in link.faces):
+                            addLink = True
+                # add block
+                if currChild[6] != 3:
+                    self.children[key] = robotMutation.addLink(currChild)
+                elif addLink and currChild[6] == 3:
+                    self.children[key] = robotMutation.addLink(currChild)
+                else:
+                    newSynap = self.MutateSynapses(currChild[3])
+                    currChild[3] = newSynap
+                    self.children[key] = currChild
             # Remove block
             else:
                 if currChild[6] > 3:
@@ -118,7 +134,7 @@ class PARALLEL_HILL_CLIMBER:
         self.Select()
 
     def Print(self):
-        print("")
+        print("Current Generation: " + str(self.currentGeneration))
         print("")
         for key in self.fitnessDictParents:
             print("Parent " + str(key) + ": " + str(self.fitnessDictParents[key]) + " Child: " + str(self.fitnessDictChildren[key]))
