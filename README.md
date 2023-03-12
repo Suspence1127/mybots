@@ -1,5 +1,5 @@
 # Spencer Rothfleisch
-# Assignment 8
+# Final Project
 
 In Assignment 8, I used the parallel hill climber to design morphology and behavior for locomotion for my robot from Assignment 7. This randomized robot has a random number of randomly shaped links with random sensor placement, and the links with and without sensors are colored as green and blue, respectively. 
 
@@ -10,7 +10,7 @@ The morphospace is as follows:<br />
 
 The mutations are as follows:<br />
 &nbsp;&nbsp;&nbsp;&nbsp;-There is a 33% chance of a mutation to a synapse weight, adding a link, or removing a link<br />
-&nbsp;&nbsp;&nbsp;&nbsp;-To remove a link, an edge link (a link that is only connected to one joint) is removed, and no link is allowed to be placed in its spot in future generations<br />
+&nbsp;&nbsp;&nbsp;&nbsp;-To remove a link, an edge link (a link that is only connected to one joint) is removed, and no link is allowed to be placed in its spot in future generations. Links cannot be removed if there is only 3 links left.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;-To add a link, a random openn face is found on a random link. Then, a link without a sensor is generated and connected by joint to the open face, and this joint is given a motor and is connected by synapses to every sensor<br />
 &nbsp;&nbsp;&nbsp;&nbsp;-When a synapse weight is mutated, a synapse is selected at random and then its weight is re-randomized between -1 and 1<br />
 &nbsp;&nbsp;&nbsp;&nbsp;-Besides randomizing the weight of one synapse or adding a new joint, the rest of the brain and its weights will always remain the same<br />

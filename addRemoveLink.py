@@ -195,7 +195,7 @@ class robotMutation:
         return True
     
     def removeLink(robot):
-        # Robot = [self.linkDict, self.jointDict, self.linkSensor, self.synapseDict, self.myID, self.numLinks]
+        # Robot = [self.linkDict, self.jointDict, self.linkSensor, self.synapseDict, self.myID, self.numLinks, self.actualNumLinks]
         linkDict = robot[0]
         foundLink = False
         while not foundLink:
@@ -208,6 +208,7 @@ class robotMutation:
         removedLink.z = 0
         linkDict["Link" + str(currLink)] = removedLink
         robot[0] = linkDict
+        robot[6] = robot[6] - 1
         return robot
 
     def addSynapses(linkSensor, synapseDict):
@@ -223,8 +224,9 @@ class robotMutation:
         return synapseDict
 
     def addLink(robot):
-        # Robot = [self.linkDict, self.jointDict, self.linkSensor, self.synapseDict, self.myID, self.numLinks]
+        # Robot = [self.linkDict, self.jointDict, self.linkSensor, self.synapseDict, self.myID, self.numLinks, self.actualNumLinks]
         numberLinks = robot[5]
+        actualNumLinks = robot[6]
         linkDict = robot[0]
         jointDict = robot[1]
         synapseDict = robot[3]
@@ -252,4 +254,4 @@ class robotMutation:
                     currLinkName = currLinkName + 1
                     if len(synapseDict) > 0:
                         synapseDict = robotMutation.addSynapses(robot[2], synapseDict)
-        return [linkDict, jointDict, robot[2], synapseDict, robot[4], numberLinks + 1]
+        return [linkDict, jointDict, robot[2], synapseDict, robot[4], numberLinks + 1, actualNumLinks + 1]

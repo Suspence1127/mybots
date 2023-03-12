@@ -309,6 +309,7 @@ class SOLUTION:
     def Create_Simulation(self):
         # Determines the number of links for the snake
         self.numLinks = numpy.random.randint(3,c.botSize)
+        self.actualNumLinks = self.numLinks
         self.Create_World()
         if not self.created:
             self.mapRobot(self.numLinks)
@@ -329,4 +330,4 @@ class SOLUTION:
         return self.weights[currentRow][currentColumn]
     
     def Get_Robot(self):
-        return [self.linkDict, self.jointDict, self.linkSensor, self.synapseDict, self.myID, self.numLinks]
+        return [self.linkDict, self.jointDict, self.linkSensor, self.synapseDict, self.myID, self.numLinks, self.actualNumLinks]

@@ -54,7 +54,7 @@ class PARALLEL_HILL_CLIMBER:
         pass
 
     def Spawn(self):
-        # Robot = [self.linkDict, self.jointDict, self.linkSensor, self.synapseDict, self.myID, self.numLinks]
+        # Robot = [self.linkDict, self.jointDict, self.linkSensor, self.synapseDict, self.myID, self.numLinks, self.actualNumLinks]
         self.children = dict()
         for key in self.parents.keys():
             newChild = copy.deepcopy(self.parents[key])
@@ -77,7 +77,12 @@ class PARALLEL_HILL_CLIMBER:
                 self.children[key] = robotMutation.addLink(currChild)
             # Remove block
             else:
-                self.children[key] = robotMutation.removeLink(currChild)
+                if currChild[6] > 3:
+                    self.children[key] = robotMutation.removeLink(currChild)
+                else:
+                    newSynap = self.MutateSynapses(currChild[3])
+                    currChild[3] = newSynap
+                    self.children[key] = currChild
 
     def MutateSynapses(self, sypArr):
         mutateNum = numpy.random.randint(len(sypArr))
