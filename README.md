@@ -1,6 +1,5 @@
-# Spencer Rothfleisch
-# Final Project
-# The Artist
+# Final Project - The Artist
+Created By Spencer Rothfleisch
 
 ![FinalProjectGif](https://github.com/Suspence1127/mybots/blob/finalProject/FinalProjectGif.gif)
 
@@ -41,9 +40,11 @@ The algorithm is as follows:<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e. If the fitness of the child is more favorable than the parent, it takes the parent's position<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f. This continues for 20 generations (configurable in constants.py)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;5. Best evolution and its original parent are shown<br />
-&nbsp;&nbsp;&nbsp;&nbsp;6. The fitness of the 5 robots are [plotted](https://github.com/Suspence1127/mybots/blob/assignment8/samplePlot.png) and shown (example shows 5 seeds for 20 generations)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;6. The fitness of the 5 robots are plotted:<br />
+![alt text](https://github.com/Suspence1127/mybots/blob/finalProject/samplePlot.png)
+This example has 5 seeds, with each seed evolving 5 robots for 20 generations. The most fit robot from each seed is graphed.
 
-To see a 5 of the best performing robots (and their original parents), run button.py with seedShift = 30, 49, 60, 100, or 127 in constants.py.
+Finally, to see a 5 of the best performing robots (and their original parents), run button.py with seedShift = 30, 49, 60, 100, or 127 in constants.py, which is acts as a checkpoint to reload the best bots.
 
 Diagram:
 ![alt text](https://github.com/Suspence1127/mybots/blob/assignment8/diagramNEW.jpg)
