@@ -30,30 +30,36 @@ class PARALLEL_HILL_CLIMBER:
         for currentGeneration in range(c.numberOfGenerations):
             self.Evolve_For_One_Generation()
             self.currentGeneration = self.currentGeneration + 1
-        self.Show_Best()
-        pass
+        return self.Show_Best()
 
     def Show_Best(self):
         bestKey = 0
         for key in self.parents.keys():
             if self.fitnessDictParents[key] < self.fitnessDictParents[bestKey]:
                 bestKey = key
-        runSim.Start_Simulation(self.parents[bestKey], "GUI")
-        runSim.Start_Simulation(self.ogParents[bestKey], "GUI")
+        # runSim.Start_Simulation(self.parents[bestKey], "GUI")
+        # runSim.Start_Simulation(self.ogParents[bestKey], "GUI")
         print("Best Fitness: " + str(self.fitnessDictParents[bestKey]) + ", ID: " + str(self.parents[bestKey][4]) + ", Parent: " + str(bestKey))
+        return self.parents[bestKey], self.ogParents[bestKey], self.fitnessPlotData[bestKey]
+        # for i in range(c.populationSize):
+        #     plt.plot(self.fitnessPlotData[i], label="Robot {}".format(i))
+        # # add labels and title to the plot
+        # plt.xlabel('Generation')
+        # plt.ylabel('Fitness (Distance in -x Direction)')
+        # plt.title('Robot VS Fitness')
+        # plt.legend()
+        # plt.show()
+        # os.system("del brain*.nndf")
+        # os.system("del fitness*.txt")
+        # os.system("del body*.urdf")
+        # pass
 
-        for i in range(c.populationSize):
-            plt.plot(self.fitnessPlotData[i], label="Robot {}".format(i))
-        # add labels and title to the plot
-        plt.xlabel('Generation')
-        plt.ylabel('Fitness (Distance in -x Direction)')
-        plt.title('Robot VS Fitness')
-        plt.legend()
-        plt.show()
-        os.system("del brain*.nndf")
-        os.system("del fitness*.txt")
-        os.system("del body*.urdf")
-        pass
+    # def Start_Final_Simulation(self, best, original):
+    #     os.system("del brain*.nndf")
+    #     os.system("del fitness*.txt")
+    #     os.system("del body*.urdf")
+    #     runSim.Start_Simulation(best, "GUI")
+    #     runSim.Start_Simulation(original, "GUI")
 
     def Spawn(self):
         # Robot = [self.linkDict, self.jointDict, self.linkSensor, self.synapseDict, self.myID, self.numLinks, self.actualNumLinks]
