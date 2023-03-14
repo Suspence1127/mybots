@@ -1,8 +1,10 @@
 # Spencer Rothfleisch
 # Final Project
-# The Engineer
+# The Artist
 
-In Assignment 8, I used the parallel hill climber to design morphology and behavior for locomotion for my robot from Assignment 7. This randomized robot has a random number of randomly shaped links with random sensor placement, and the links with and without sensors are colored as green and blue, respectively. The final project takes Assignment 8 and runs it for 10 parents x 500 generations x 10 seeds = 50,000 sims
+![FinalProjectGif](https://replace)
+
+In Assignment 8, I used the parallel hill climber to design morphology and behavior for locomotion for my robot from Assignment 7. This randomized robot has a random number of randomly shaped links with random sensor placement, and the links with and without sensors are colored as green and blue, respectively.
 
 The morphospace is as follows:<br />
 &nbsp;&nbsp;&nbsp;&nbsp;-Any body shape is possible that can be created from random links sized 0.5 to 2 units in the x, y, and z direction<br />
@@ -40,6 +42,8 @@ The algorithm is as follows:<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f. This continues for 20 generations (configurable in constants.py)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;5. Best evolution and its original parent are shown<br />
 &nbsp;&nbsp;&nbsp;&nbsp;6. The fitness of the 5 robots are [plotted](https://github.com/Suspence1127/mybots/blob/assignment8/samplePlot.png) and shown (example shows 5 seeds for 20 generations)<br />
+
+To see a 5 of the best performing robots (and their original parents), run button.py with seedShift = 30, 49, 60, 100, or 127 in constants.py.
 
 Diagram:
 ![alt text](https://github.com/Suspence1127/mybots/blob/assignment8/diagramNEW.jpg)

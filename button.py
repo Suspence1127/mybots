@@ -11,14 +11,19 @@ import runSim
 # os.system("del body*.urdf")
 # exit()
 
-# Sets the random seed
-np.random.seed(27)
-random.seed(27)
+# Change this to false if you want a fully random PHC every time
+setSeed = True
 
 fitnessDict = dict()
 robotDict = dict()
 # Runs the robot (if evolved, the fitness function will evolve based on the negative x direction)
 for i in range(5):
+    # Sets the random seed
+    if setSeed:
+        np.random.seed(i + c.seedShift)
+        random.seed(i + c.seedShift)
+
+    # Carrys out PHC
     print("\nSeed: " + str(i))
     print("")
     hc = p.PARALLEL_HILL_CLIMBER()
@@ -45,7 +50,7 @@ runSim.Start_Simulation(robotDict[bestIndex][1], "GUI")
 
 # plot
 for i in range(5):
-    plt.plot(fitnessDict[i], label="Seed {}".format(i))
+    plt.plot(fitnessDict[i], label="Robot {} from Seed {}".format(robotDict[i][0][4], i))
     # add labels and title to the plot
 plt.xlabel('Generation')
 plt.ylabel('Fitness (Distance in -x Direction)')

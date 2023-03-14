@@ -1,5 +1,6 @@
 sleepTime = 1/120
-iterations = 1500
+iterations = 2500
+seedShift = 49
 frequency = 10
 maxForce = 125
 phaseOffset = 3.14159/2
