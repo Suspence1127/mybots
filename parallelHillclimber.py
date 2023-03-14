@@ -107,8 +107,9 @@ class PARALLEL_HILL_CLIMBER:
                     self.children[key] = currChild
 
     def MutateSynapses(self, sypArr):
-        mutateNum = numpy.random.randint(len(sypArr))
-        sypArr[mutateNum][2] = random.random() * 2 - 1
+        if len(sypArr) > 0:
+            mutateNum = numpy.random.randint(len(sypArr))
+            sypArr[mutateNum][2] = random.random() * 2 - 1
         return sypArr
 
     def Select(self):

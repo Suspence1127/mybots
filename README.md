@@ -1,7 +1,8 @@
 # Spencer Rothfleisch
 # Final Project
+# The Engineer
 
-In Assignment 8, I used the parallel hill climber to design morphology and behavior for locomotion for my robot from Assignment 7. This randomized robot has a random number of randomly shaped links with random sensor placement, and the links with and without sensors are colored as green and blue, respectively. 
+In Assignment 8, I used the parallel hill climber to design morphology and behavior for locomotion for my robot from Assignment 7. This randomized robot has a random number of randomly shaped links with random sensor placement, and the links with and without sensors are colored as green and blue, respectively. The final project takes Assignment 8 and runs it for 10 parents x 500 generations x 10 seeds = 50,000 sims
 
 The morphospace is as follows:<br />
 &nbsp;&nbsp;&nbsp;&nbsp;-Any body shape is possible that can be created from random links sized 0.5 to 2 units in the x, y, and z direction<br />

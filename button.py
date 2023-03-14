@@ -6,14 +6,21 @@ import matplotlib.pyplot as plt
 import constants as c
 import runSim
 
+# os.system("del brain*.nndf")
+# os.system("del fitness*.txt")
+# os.system("del body*.urdf")
+# exit()
+
 # Sets the random seed
-np.random.seed(909)
-random.seed(909)
+np.random.seed(27)
+random.seed(27)
 
 fitnessDict = dict()
 robotDict = dict()
 # Runs the robot (if evolved, the fitness function will evolve based on the negative x direction)
 for i in range(5):
+    print("\nSeed: " + str(i))
+    print("")
     hc = p.PARALLEL_HILL_CLIMBER()
     best, parent, fitness = hc.Evolve()
     fitnessDict[i] = fitness
@@ -27,7 +34,7 @@ for i in range(5):
         bestFitness = fitnessDict[i][c.numberOfGenerations - 1]
         bestIndex = i
 
-print("\nSeed: " + str(bestIndex) + " Best Fitness: " + str(bestFitness) + ", ID: " + str(robotDict[bestIndex][0][4]) + ", Parent: " + str(robotDict[bestIndex][1][4]))
+print("\nSeed: " + str(bestIndex) + ", Best Fitness: " + str(bestFitness) + ", ID: " + str(robotDict[bestIndex][0][4]) + ", Parent: " + str(robotDict[bestIndex][1][4]))
 os.system("del brain*.nndf")
 os.system("del fitness*.txt")
 os.system("del body*.urdf")
