@@ -2,7 +2,7 @@
 # Final Project
 # The Artist
 
-![FinalProjectGif](https://replace)
+![FinalProjectGif](https://github.com/Suspence1127/mybots/blob/finalProject/FinalProjectGif.gif)
 
 In Assignment 8, I used the parallel hill climber to design morphology and behavior for locomotion for my robot from Assignment 7. This randomized robot has a random number of randomly shaped links with random sensor placement, and the links with and without sensors are colored as green and blue, respectively.
 
