@@ -5,7 +5,7 @@ Created By Spencer Rothfleisch
 
 As seen in the teaser gif above, I used the parallel hill climber methodology to design and evolve morphology and behavior for randomly generated robots. This randomized robot has a random number of randomly shaped links with random sensor placement, and the links with and without sensors are colored as green and blue, respectively.
 
-[YouTube Link](https://www.youtube.com/watch?v=lpZJTHlbugk) (explains the following and shows examples)
+[YouTube Link](https://www.youtube.com/watch?v=lpZJTHlbugk)
 
 The morphospace:<br />
 
