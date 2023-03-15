@@ -3,23 +3,27 @@ Created By Spencer Rothfleisch
 
 ![FinalProjectGif](https://github.com/Suspence1127/mybots/blob/finalProject/FinalProjectGif.gif)
 
-In Assignment 8, I used the parallel hill climber to design morphology and behavior for locomotion for my robot from Assignment 7. This randomized robot has a random number of randomly shaped links with random sensor placement, and the links with and without sensors are colored as green and blue, respectively.
+As seen in the teaser gif above, I used the parallel hill climber methodology to design and evolve morphology and behavior for randomly generated robots. This randomized robot has a random number of randomly shaped links with random sensor placement, and the links with and without sensors are colored as green and blue, respectively.
 
-The morphospace is as follows:<br />
-&nbsp;&nbsp;&nbsp;&nbsp;-Any body shape is possible that can be created from random links sized 0.5 to 2 units in the x, y, and z direction<br />
-&nbsp;&nbsp;&nbsp;&nbsp;-Joint rotation orientation is determined depending on the placement of the new link relative to the previous link to prevent self-intersection, which limits some movement capabilities but allows for movement in any direction as well as jumping<br />
-&nbsp;&nbsp;&nbsp;&nbsp;-For the brain, every joint has a motor neuron, each link has a 50% chance of having a sensor neuron, and the neural network connects every sensor neuron to every motor neuron, meaning a sensor on one side of the body certainly affects a motor on the other side of the body<br />
+[YouTube Link](https://youtube.com/) (explains the following and shows examples)
 
-The mutations are as follows:<br />
-&nbsp;&nbsp;&nbsp;&nbsp;-There is a 33% chance of a mutation to a synapse weight, adding a link, or removing a link<br />
-&nbsp;&nbsp;&nbsp;&nbsp;-To remove a link, an edge link (a link that is only connected to one joint) is removed, and no link is allowed to be placed in its spot in future generations. Links cannot be removed if there is only 3 links left.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;-To add a link, a random openn face is found on a random link. Then, a link without a sensor is generated and connected by joint to the open face, and this joint is given a motor and is connected by synapses to every sensor<br />
-&nbsp;&nbsp;&nbsp;&nbsp;-When a synapse weight is mutated, a synapse is selected at random and then its weight is re-randomized between -1 and 1<br />
-&nbsp;&nbsp;&nbsp;&nbsp;-Besides randomizing the weight of one synapse or adding a new joint, the rest of the brain and its weights will always remain the same<br />
+The morphospace:<br />
 
-The algorithm is as follows:<br />
-&nbsp;&nbsp;&nbsp;&nbsp;1. Click "button.py" to start generation<br />
-&nbsp;&nbsp;&nbsp;&nbsp;2. 5 random robots are created, each with a random number of links between 3 and 15 (configurable in constants.py)<br />
+Any body shape is possible that can be created from random links sized 0.5 to 2 units in the x, y, and z direction. Bodies and joints are created as follows:<br/>
+![BodyCreation](https://github.com/Suspence1127/mybots/blob/finalProject/bodyCreationDiagram.jpg)<br/>
+
+The neural network of the brain connects every sensor neuron to every motor neuron:<br/>
+![BrainCreation](https://github.com/Suspence1127/mybots/blob/finalProject/brainCreationDiagram.jpg)<br/>
+
+The three possible mutations are explained in the following diagram:<br />
+![mutationDiagram](https://github.com/Suspence1127/mybots/blob/finalProject/mutationDiagram.jpg)<br/>
+
+Evolution is conducted and the most fit robot is selected as shown below:<br/>
+![selectionDiagram](https://github.com/Suspence1127/mybots/blob/finalProject/selectionDiagram.jpg)<br/>
+
+How the algorithm works:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;1. Click "button.py" to start generation of 5 seperate parallelHillclimber.py (PHC) classes<br />
+&nbsp;&nbsp;&nbsp;&nbsp;2. 5 random robots are created using solution.py for each iteration of PHC, each with a random number of links between 3 and 15 (configurable in constants.py)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a. First link is created in an absolute position of [0, 0, 2] with a random size in the range desribed in the morphospace<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b. First joint and second link are added to a random face on first link<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c. An existing link is randomly selected<br />
@@ -32,21 +36,19 @@ The algorithm is as follows:<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a. Each link is determined at random to be a sensor or not with a 50% chance<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b. Every joint is given a motor <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c. For the synapses, Every sensor is connected to every motor to be a complete neural network with random weights between -1 and 1<br />
-&nbsp;&nbsp;&nbsp;&nbsp;4. Evolution commences<br />
+&nbsp;&nbsp;&nbsp;&nbsp;4. Evolution commences via the mutate methods in PHC<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a. body#.urdf and brain#.nndf are created for the 5 parents (number of parents configurable in constants.py)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b. Fitness is recorded (distance travelled in negative x direction)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b. Fitness is recorded (distance travelled in negative x direction) using results from the simulation conducted through runSim.py<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c. Evolution occurs with a 33% chance of a mutation to a synapse weight, adding a link, or removing a link<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d. body#.urdf and brain#.nndf are created for the 5 children and fitness is recorded<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e. If the fitness of the child is more favorable than the parent, it takes the parent's position<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f. This continues for 20 generations (configurable in constants.py)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;5. Best evolution and its original parent are shown<br />
-&nbsp;&nbsp;&nbsp;&nbsp;6. The fitness of the 5 robots are plotted:<br />
-![alt text](https://github.com/Suspence1127/mybots/blob/finalProject/samplePlot.png)
+&nbsp;&nbsp;&nbsp;&nbsp;5. Best evolution and its original parent are saved from each seed of PHC<br />
+&nbsp;&nbsp;&nbsp;&nbsp;6. The best iteration of the robot and its parent are displayed using runSim.py.<br /> 
+&nbsp;&nbsp;&nbsp;&nbsp;7. The fitness of the 5 robots are plotted:<br />
+![alt text](https://github.com/Suspence1127/mybots/blob/finalProject/samplePlot.png)<br />
 This example has 5 seeds, with each seed evolving 5 robots for 20 generations. The most fit robot from each seed is graphed.
 
 Finally, to see a 5 of the best performing robots (and their original parents), run button.py with seedShift = 30, 49, 60, 100, or 127 in constants.py, which is acts as a checkpoint to reload the best bots.
-
-Diagram:
-![alt text](https://github.com/Suspence1127/mybots/blob/assignment8/diagramNEW.jpg)
 
 Credits: This assignment was built with assistance from the [r/ludobots](https://www.reddit.com/r/ludobots/) reddit course and the [pyrosim](https://ccappelle.github.io/pyrosim/) python package.
