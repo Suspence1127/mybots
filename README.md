@@ -5,23 +5,23 @@ Created By Spencer Rothfleisch
 
 As seen in the teaser gif above, I used the parallel hill climber methodology to design and evolve morphology and behavior for randomly generated robots. This randomized robot has a random number of randomly shaped links with random sensor placement, and the links with and without sensors are colored as green and blue, respectively.
 
-[YouTube Link](https://youtube.com/) (explains the following and shows examples)
+[YouTube Link](https://www.youtube.com/watch?v=lpZJTHlbugk) (explains the following and shows examples)
 
 The morphospace:<br />
 
-Any body shape is possible that can be created from random links sized 0.5 to 2 units in the x, y, and z direction. Bodies and joints are created as follows:<br/>
+Any body shape is possible that can be created from random links sized 0.5 to 2 units in the x, y, and z direction. Bodies and joints are created as follows: (The numbers on the phenotype diagram represent one posibility of the order that the robot links were generated)<br/>
 ![BodyCreation](https://github.com/Suspence1127/mybots/blob/finalProject/bodyCreationDiagram.jpg)<br/>
 
-The neural network of the brain connects every sensor neuron to every motor neuron:<br/>
+The neural network of the brain sends synapses that connect every sensor neuron to every motor neuron:<br/>
 ![BrainCreation](https://github.com/Suspence1127/mybots/blob/finalProject/brainCreationDiagram.jpg)<br/>
 
-The three possible mutations are explained in the following diagram:<br />
+Each generation a mutation occurs and each has a 33% chance of happening, as explained in the following diagram:<br />
 ![mutationDiagram](https://github.com/Suspence1127/mybots/blob/finalProject/mutationDiagram.jpg)<br/>
 
 Evolution is conducted and the most fit robot is selected as shown below:<br/>
 ![selectionDiagram](https://github.com/Suspence1127/mybots/blob/finalProject/selectionDiagram.jpg)<br/>
 
-How the algorithm works:<br />
+Detailed look at how the algorithm works:<br />
 &nbsp;&nbsp;&nbsp;&nbsp;1. Click "button.py" to start generation of 5 seperate parallelHillclimber.py (PHC) classes<br />
 &nbsp;&nbsp;&nbsp;&nbsp;2. 5 random robots are created using solution.py for each iteration of PHC, each with a random number of links between 3 and 15 (configurable in constants.py)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a. First link is created in an absolute position of [0, 0, 2] with a random size in the range desribed in the morphospace<br />
@@ -49,6 +49,6 @@ How the algorithm works:<br />
 ![alt text](https://github.com/Suspence1127/mybots/blob/finalProject/samplePlot.png)<br />
 This example has 5 seeds, with each seed evolving 5 robots for 20 generations. The most fit robot from each seed is graphed.
 
-Finally, to see a 5 of the best performing robots (and their original parents), run button.py with seedShift = 30, 49, 60, 100, or 127 in constants.py, which is acts as a checkpoint to reload the best bots.
+Finally, to see a 5 of the best performing robots (and their original parents), run button.py with seedShift = 30, 49, 60, 100, or 127 in constants.py, which is acts as a checkpoint to reload the best bots. It may take around 3 minutes for these bots to load, depending on the specifications of your computer.
 
 Credits: This assignment was built with assistance from the [r/ludobots](https://www.reddit.com/r/ludobots/) reddit course and the [pyrosim](https://ccappelle.github.io/pyrosim/) python package.
